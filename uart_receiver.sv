@@ -4,22 +4,5 @@
 // AUTHORS: Enrique Orozco Jr. <enrique-orozco@outlook.com>
 ///////////////////////////////////////////////////////////////////////////////
 
-interface uart_if;
-
-  // Shared Inputs:
-  logic clk;
-  logic reset;
-
-  // Transmitter Inputs:
-  logic transmit;
-  logic [7:0] TxData;
-
-  // Transmitter Outputs:
-  logic TxD;
-  logic busy;
-
-  // Receiver Outputs:
-  logic [7:0] RxData;
-  logic valid_rx;
-
-endinterface
+module Uart_Receiver(uart_if uart);
+endmodule
