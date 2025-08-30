@@ -1,8 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////////
 // PROJECT: UART Communication System with Error Detection
 ///////////////////////////////////////////////////////////////////////////////
+// FILENAME: uart_rx.sv
 // AUTHORS: Enrique Orozco Jr. <enrique-orozco@outlook.com>
+// DESCRIPTION: WIP
 ///////////////////////////////////////////////////////////////////////////////
 
-module uart_rx(uart_if uart);
+module uart_rx #(
+  parameter int CLK_FREQ = 50_000_000,
+  parameter int BAUD_RATE = 115_200
+) (
+  input logic clk,
+  uart_if.rx rx_packet
+);
 endmodule

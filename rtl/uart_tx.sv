@@ -34,14 +34,13 @@ module uart_tx #(
   localparam int DATA_WIDTH = tx_packet.DATA_WIDTH;
   localparam int DATA_BITS = $clog2(DATA_WIDTH);
 
-  logic [DATA_WIDTH-1:0] tx_shift;
   logic [DATA_BITS-1:0] bit_index;
-  logic sending;
+  logic [DATA_WIDTH-1:0] tx_shift;
 
   // Next-State Logic (Combinational):
   logic bitTransmitted, dataTransmitted;
   assign bitTransmitted = (cycle_counter == CYCLES_PER_BIT - 1);
-  assign dataTransmitted = (bit_index == DATA_WIDTH - 1 && bitTransmitted);
+  assign dataTransmitted = (bit_index == 0 && bitTransmitted);
 
   always_comb begin
     case (currState)
@@ -56,8 +55,65 @@ module uart_tx #(
 
   // Next-State Logic (Sequential):
   always_ff @(posedge clk) begin
-    if (reset) currState <= IDLE;
+    if (tx_packet.reset) currState <= IDLE;
     else currState <= nextState;
+  end
+
+  // Odd Parity Detection:
+  logic parity;
+  assign parity = ^tx_shift;
+
+  // Transmitting Data:
+  always_ff @(posedge clk) begin
+
+    if (tx_packet.reset) begin
+      tx_packet.TxD <= 1;
+      tx_packet.busy <= 0;
+      cycle_counter <= 0;
+      bit_index <= 0;
+      tx_shift <= 0;
+    end else begin
+
+      case (currState) 
+
+        IDLE: begin
+          tx_packet.TxD <= 1;
+          tx_packet.busy <= 0;
+          cycle_counter <= 0;
+          bit_index <= 0;
+          tx_shift <= 0;
+        end
+
+        START: begin
+          tx_packet.TxD <= 0;
+          tx_packet.busy <= 1;
+          tx_shift <= tx_packet.TxData;
+          bit_index <= DATA_WIDTH - 1;    // LSB-first
+          cycle_counter <= (bitTransmitted) ? 0 : cycle_counter + 1;
+        end
+
+        DATA: begin
+          tx_packet.TxD <= tx_shift[bit_index];
+          tx_packet.busy <= 1;
+          bit_index <= (bitTransmitted) ? bit_index - 1 : bit_index;
+          cycle_counter <= (bitTransmitted) ? 0 : cycle_counter + 1;
+        end
+
+        PARITY: begin
+          tx_packet.TxD <= parity;
+          tx_packet.busy <= 1;
+          cycle_counter <= (bitTransmitted) ? 0 : cycle_counter + 1;
+        end
+
+        STOP: begin
+          tx_packet.TxD <= 1;
+          tx_packet.busy <= 1;
+          cycle_counter <= (bitTransmitted) ? 0 : cycle_counter + 1;
+        end
+
+      endcase
+    end
+
   end
 
 endmodule
