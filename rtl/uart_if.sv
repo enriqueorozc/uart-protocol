@@ -2,7 +2,7 @@
 // PROJECT: UART Communication System with Error Detection
 ///////////////////////////////////////////////////////////////////////////////
 // FILENAME: uart_if.sv
-// AUTHORS: Enrique Orozco Jr. <enrique-orozco@outlook.com>
+// AUTHOR: Enrique Orozco Jr. <enrique-orozco@outlook.com>
 // DESCRIPTION: This file describes the encapsulation of all the wires 
 // that will be utilized in the UART communication system.
 ///////////////////////////////////////////////////////////////////////////////
