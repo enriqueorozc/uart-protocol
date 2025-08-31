@@ -3,8 +3,11 @@
 ///////////////////////////////////////////////////////////////////////////////
 // FILENAME: uart_tx.sv
 // AUTHOR: Enrique Orozco Jr. <enrique-orozco@outlook.com>
-// DESCRIPTION: WIP
-///////////////////////////////////////////////////////////////////////////////
+// DESCRIPTION: This file details the implementation of the UART transmitter
+// with an even parity bit. This design uses a 5-state Moore FSM to implement
+// the transmitter. Subsequent transmission must wait until previous
+// transmissions have been completed. 
+ ///////////////////////////////////////////////////////////////////////////////
 
 module uart_tx #(
   parameter int CLK_FREQ = 100_000_000,

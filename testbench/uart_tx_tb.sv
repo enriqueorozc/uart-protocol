@@ -3,7 +3,11 @@
 ///////////////////////////////////////////////////////////////////////////////
 // FILENAME: uart_tx_tb.sv
 // AUTHOR: Enrique Orozco Jr. <enrique-orozco@outlook.com>
-// DESCRIPTION: WIP
+// DESCRIPTION: This testbench uses a file-based verification method to test
+// the UART transmitter. It works in conjunction with the 'generate_stimulus'
+// and 'tx_compare' scripts that help generate random data vectors and compare
+// the output of the DUT. To properly test the UART transmitter, run
+// 'generate_stimulus', this testbench, and then 'tx_compare.'
 ///////////////////////////////////////////////////////////////////////////////
 
 timeunit 1ns;
