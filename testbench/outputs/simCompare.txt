@@ -1,0 +1,10 @@
+data-in: 102 | data-out: 102 | parity: 0 | PASSED
+data-in: 187 | data-out: 187 | parity: 0 | PASSED
+data-in: 243 | data-out: 243 | parity: 0 | PASSED
+data-in: 56 | data-out: 56 | parity: 1 | PASSED
+data-in: 10 | data-out: 10 | parity: 0 | PASSED
+data-in: 242 | data-out: 242 | parity: 1 | PASSED
+data-in: 117 | data-out: 117 | parity: 1 | PASSED
+data-in: 68 | data-out: 68 | parity: 0 | PASSED
+data-in: 156 | data-out: 156 | parity: 0 | PASSED
+data-in: 2 | data-out: 2 | parity: 1 | PASSED
