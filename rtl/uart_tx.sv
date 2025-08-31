@@ -59,7 +59,7 @@ module uart_tx #(
     else currState <= nextState;
   end
 
-  // Odd Parity Detection:
+  // Even-Parity Detection:
   logic parity;
   assign parity = ^tx_shift;
 

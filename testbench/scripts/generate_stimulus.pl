@@ -12,14 +12,16 @@
 use strict;
 use warnings;
 
-use Data::Dumper;
 use feature 'say';
+use File::Path 'make_path';
 
-# Destination file:
-my $DEST_FILE = "stimulus.txt";
+# Check Output Directory + Destination File:
+my $OUTPUT_DIR = "../outputs";
+make_path($OUTPUT_DIR) unless -d $OUTPUT_DIR;
+my $DEST_FILE = "../outputs/stimulus.txt";
 
 # Test Configuration Parameters (CHANGE THESE):
-my $TEST_POINTS = 25;
+my $TEST_POINTS = 10;
 my $DATA_WIDTH = 8;
 
 # Create Range from DATA_WIDTH:
