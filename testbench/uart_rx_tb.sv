@@ -29,4 +29,21 @@ module uart_rx_tb();
     .clk(clk), .rx_packet(rx_if.rx)
   );
 
+  initial begin
+
+    // Interface Connection:
+    rx_if.TxD = 1;
+    rx_if.reset = 0;
+
+    repeat(10) @(posedge clk);
+
+    // Reset Receiver:
+    rx_if.reset = 1;
+    @(posedge clk);
+    rx_if.reset = 0;
+    @(posedge clk);
+
+    $finish;
+  end
+
 endmodule
