@@ -24,7 +24,7 @@ module uart_tx_tb();
 
   // Clock Generation:
   localparam real CLK_PERIOD = 1_000_000_000.0 / CLK_FREQ;
-  logic clk, reset;
+  logic clk;
 
   initial clk = 0;
   always #(CLK_PERIOD / 2) clk = ~clk;
@@ -63,9 +63,9 @@ module uart_tx_tb();
     end
 
     // Create the Simulation Output File (CHANGE AS NEEDED):
-    simulation_file = $fopen("C:/Users/Enriq/Documents/personal/uart-controller/testbench/outputs/simOutput.txt", "w");
+    simulation_file = $fopen("C:/Users/Enriq/Documents/personal/uart-controller/testbench/outputs/tx_simOutput.txt", "w");
     if (simulation_file == 0) begin
-      $fatal(1, "ERROR: Could not create simOutput.txt");
+      $fatal(1, "ERROR: Could not create tx_simOutput.txt");
     end
 
     // Interface Connections:

@@ -6,7 +6,7 @@
 ## FILENAME: generate_stimulus.pl
 ## AUTHOR: Enrique Orozco Jr. <enrique-orozco@outlook.com>
 ## DESCRIPTION: This script generates a random data vector to be utilized
-## as stimulus for the UART transmitter.
+## as stimulus for the UART transmitter and receiver.
 ###############################################################################
 
 use strict;

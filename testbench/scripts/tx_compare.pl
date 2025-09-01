@@ -33,7 +33,7 @@ sub correct_parity {
 # Check Output Directory + Destination File:
 my $OUTPUT_DIR = "../outputs";
 make_path($OUTPUT_DIR) unless -d $OUTPUT_DIR;
-my $DEST_FILE = "../outputs/simCompare.txt";
+my $DEST_FILE = "../outputs/tx_simCompare.txt";
 
 # Open the Destination File:
 open (FHW, '>', $DEST_FILE);
@@ -49,8 +49,8 @@ while ( <FH1> ) {
 chomp @passed_values;
 
 # Open the Simulation Output File:
-my $SIMULATION_FILE = '../outputs/simOutput.txt';
-open(FH2, '<', $SIMULATION_FILE) or die "simOutput.txt does not exist";
+my $SIMULATION_FILE = '../outputs/tx_simOutput.txt';
+open(FH2, '<', $SIMULATION_FILE) or die "tx_simOutput.txt does not exist";
 
 my $count = 0;
 while ( <FH2> ) {

@@ -44,13 +44,13 @@ module uart_rx #(
   
   assign tickAdvancement = (cycle_counter == CYCLES_PER_TICK - 1);
   assign bitReceived = (tick_counter == OVERSAMPLE_RATE - 1 && tickAdvancement);
-  assign resetTick = (tick_counter == 6 && tickAdvancement);
+  assign resetTick = (tick_counter == 6 && tickAdvancement && !halfAligned);
   assign dataReceived = (bits_received == DATA_WIDTH);
 
   always_comb begin
     case (currState)
       IDLE: nextState = (!rx_packet.TxD) ? START : IDLE;
-      START: nextState = (bitReceived) ? DATA : START;
+      START: nextState = (halfAligned) ? DATA : START;
       DATA: nextState = (dataReceived) ? PARITY : DATA;
       PARITY: nextState = (bitReceived) ? STOP : PARITY;
       STOP: nextState = (bitReceived) ? IDLE : STOP;
@@ -67,7 +67,7 @@ module uart_rx #(
   // Even-Parity Generation (Valid Rx):
   logic parity_received, parity;
   assign parity = ^(rx_packet.RxData);
-  assign valid_rx = (currState == STOP && parity == parity_received);
+  assign rx_if.valid_rx = (currState == STOP && parity == parity_received);
 
   // Receiving Data:
   always_ff @(posedge clk) begin
@@ -93,25 +93,28 @@ module uart_rx #(
           end
 
           // Properly Align 'tick_counter':
-          tick_counter <= (bitReceived || resetTick) ? 0 : tick_counter + 1;
+          tick_counter <= (bitReceived || resetTick) ? 0 : 
+            (tickAdvancement) ? tick_counter + 1 : tick_counter;
 
         end
 
         DATA: begin
           cycle_counter <= (tickAdvancement) ? 0 : cycle_counter + 1;
-          tick_counter <= (bitReceived) ? 0 : tick_counter + 1;
           bits_received <= (bitReceived) ? bits_received + 1 : bits_received;
+          tick_counter <= (bitReceived) ? 0 :
+            (tickAdvancement) ? tick_counter + 1 : tick_counter;
           
           // Shift-in LSB First:
           if (bitReceived) begin
-            rx_packet.RxData <= {rx_packet.TxD, rx_packet.RxData[DATA_WIDTH-2:0]};
+            rx_packet.RxData <= {rx_packet.TxD, rx_packet.RxData[DATA_WIDTH-1:1]};
           end
 
         end
 
         PARITY: begin
           cycle_counter <= (tickAdvancement) ? 0 : cycle_counter + 1;
-          tick_counter <= (bitReceived) ? 0 : tick_counter + 1;
+          tick_counter <= (bitReceived) ? 0 :
+            (tickAdvancement) ? tick_counter + 1 : tick_counter;
 
           if (bitReceived) begin
             parity_received <= rx_packet.TxD;
@@ -121,7 +124,8 @@ module uart_rx #(
 
         STOP: begin
           cycle_counter <= (tickAdvancement) ? 0 : cycle_counter + 1;
-          tick_counter <= (bitReceived) ? 0 : tick_counter + 1;
+          tick_counter <= (bitReceived) ? 0 :
+            (tickAdvancement) ? tick_counter + 1 : tick_counter;
         end
 
       endcase
