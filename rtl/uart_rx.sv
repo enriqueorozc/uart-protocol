@@ -41,6 +41,7 @@ module uart_rx #(
 
   // Next-State Logic (Combinational):
   logic tickAdvancement, bitReceived, dataReceived;
+  
   assign tickAdvancement = (cycle_counter == CYCLES_PER_TICK - 1);
   assign bitReceived = (tick_counter == OVERSAMPLE_RATE - 1 && tickAdvancement);
   assign dataReceived = (bits_received == bits_received);
@@ -78,7 +79,11 @@ module uart_rx #(
     end else begin
       case (currState)
 
-        
+        IDLE: ; // Do Nothing
+
+        START: begin
+
+        end
 
       endcase
     end
