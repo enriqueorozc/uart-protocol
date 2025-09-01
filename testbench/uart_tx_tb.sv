@@ -10,8 +10,7 @@
 // 'generate_stimulus', this testbench, and then 'tx_compare.'
 ///////////////////////////////////////////////////////////////////////////////
 
-timeunit 1ns;
-timeprecision 1ns;
+`timescale 1ns/1ns
 
 module uart_tx_tb();
 
