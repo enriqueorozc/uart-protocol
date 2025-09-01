@@ -15,7 +15,7 @@ module uart_rx #(
 );
 
   // Timing Parameters (Oversampling):
-  localparam int OVERSAMPLE_RATE = 16;
+  localparam int OVERSAMPLE_RATE = 16;    // DO NOT CHANGE
   localparam int CYCLES_PER_TICK = CLK_FREQ / (BAUD_RATE * OVERSAMPLE_RATE);
   localparam int CYCLE_COUNTER_WIDTH = $clog2(CYCLES_PER_TICK);
   localparam int TICK_COUNTER_WIDTH = $clog2(OVERSAMPLE_RATE);
@@ -40,11 +40,12 @@ module uart_rx #(
   logic [DATA_BITS:0] bits_received;
 
   // Next-State Logic (Combinational):
-  logic tickAdvancement, bitReceived, dataReceived;
+  logic tickAdvancement, bitReceived, dataReceived, halfAligned, resetTick;
   
   assign tickAdvancement = (cycle_counter == CYCLES_PER_TICK - 1);
   assign bitReceived = (tick_counter == OVERSAMPLE_RATE - 1 && tickAdvancement);
-  assign dataReceived = (bits_received == bits_received);
+  assign resetTick = (tick_counter == 6 && tickAdvancement);
+  assign dataReceived = (bits_received == DATA_WIDTH);
 
   always_comb begin
     case (currState)
@@ -76,13 +77,51 @@ module uart_rx #(
       cycle_counter <= 0;
       tick_counter <= 0;
       bits_received <= 0;
+      halfAligned <= 0;
+      parity_received <= 0;
     end else begin
       case (currState)
 
         IDLE: ; // Do Nothing
 
         START: begin
+          cycle_counter <= (tickAdvancement) ? 0 : cycle_counter + 1;
+          
+          // No Longer Need to Reset Counter Halfway
+          if (resetTick) begin
+            halfAligned <= 1;
+          end
 
+          // Properly Align 'tick_counter':
+          tick_counter <= (bitReceived || resetTick) ? 0 : tick_counter + 1;
+
+        end
+
+        DATA: begin
+          cycle_counter <= (tickAdvancement) ? 0 : cycle_counter + 1;
+          tick_counter <= (bitReceived) ? 0 : tick_counter + 1;
+          bits_received <= (bitReceived) ? bits_received + 1 : bits_received;
+          
+          // Shift-in LSB First:
+          if (bitReceived) begin
+            rx_packet.RxData <= {rx_packet.TxD, rx_packet.RxData[DATA_WIDTH-2:0]};
+          end
+
+        end
+
+        PARITY: begin
+          cycle_counter <= (tickAdvancement) ? 0 : cycle_counter + 1;
+          tick_counter <= (bitReceived) ? 0 : tick_counter + 1;
+
+          if (bitReceived) begin
+            parity_received <= rx_packet.TxD;
+          end
+
+        end
+
+        STOP: begin
+          cycle_counter <= (tickAdvancement) ? 0 : cycle_counter + 1;
+          tick_counter <= (bitReceived) ? 0 : tick_counter + 1;
         end
 
       endcase
