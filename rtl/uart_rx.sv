@@ -3,7 +3,10 @@
 ///////////////////////////////////////////////////////////////////////////////
 // FILENAME: uart_rx.sv
 // AUTHOR: Enrique Orozco Jr. <enrique-orozco@outlook.com>
-// DESCRIPTION: WIP
+// DESCRIPTION: This file details the implementation of the UART receiver
+// with 16x-oversampling and error-detection. This design uses a 5-state Moore
+// FSM to implement the receiver. Subsequent data must wait until the previous
+// transaction has been completed.
 ///////////////////////////////////////////////////////////////////////////////
 
 module uart_rx #(

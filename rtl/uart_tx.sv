@@ -5,8 +5,8 @@
 // AUTHOR: Enrique Orozco Jr. <enrique-orozco@outlook.com>
 // DESCRIPTION: This file details the implementation of the UART transmitter
 // with an even parity bit. This design uses a 5-state Moore FSM to implement
-// the transmitter. Subsequent transmission must wait until previous
-// transmissions have been completed. 
+// the transmitter. Subsequent data must wait until the previous transaction
+// has been completed.
  ///////////////////////////////////////////////////////////////////////////////
 
 module uart_tx #(
