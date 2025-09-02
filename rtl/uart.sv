@@ -3,7 +3,10 @@
 ///////////////////////////////////////////////////////////////////////////////
 // FILENAME: uart.sv
 // AUTHOR: Enrique Orozco Jr. <enrique-orozco@outlook.com>
-// DESCRIPTION: WIP
+// DESCRIPTION: This file details the implementation of the UART protocol
+// with error detection using an even parity bit. This design instantiates
+// the transmitter and receiver modules and connects the two. Subsequent data
+// must wait until the previous transaction has been completed.
 ///////////////////////////////////////////////////////////////////////////////
 
 module uart #(

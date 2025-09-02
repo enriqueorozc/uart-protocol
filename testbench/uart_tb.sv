@@ -3,7 +3,10 @@
 ///////////////////////////////////////////////////////////////////////////////
 // FILENAME: uart_tb.sv
 // AUTHOR: Enrique Orozco Jr. <enrique-orozco@outlook.com>
-// DESCRIPTION: WIP
+// DESCRIPTION: This testbench uses a directed verification approach to
+// test the UART protocol communication between the transmitter and the
+// receiver. It clocks a string (message) into the transmitter and compares 
+// it to what is output by the receiver (RxData).
 ///////////////////////////////////////////////////////////////////////////////
 
 `timescale 1ns/1ns
@@ -60,6 +63,9 @@ module uart_tb();
       uart_interface.transmit = 1;
       @(posedge tx_clk)
       #90000;
+
+      @(negedge tx_clk iff !uart_interface.busy);
+      assert(uart_interface.RxData && message[i]);     
     end
 
     $finish;
