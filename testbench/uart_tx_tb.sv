@@ -47,7 +47,7 @@ module uart_tx_tb();
   integer stimulus_file;
 
   // Simulation Output Helper: Writes the data and the
-  // parity bits to the simulation file for later debuggin
+  // parity bits to the simulation file for later debugging
   task automatic write_output(input [FRAME_WIDTH-1:0] data_frame);
     int data = data_frame[FRAME_WIDTH-2:2];
     int parity = data_frame[1];

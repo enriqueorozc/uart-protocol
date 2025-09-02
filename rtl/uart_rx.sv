@@ -82,7 +82,10 @@ module uart_rx #(
     end else begin
       case (currState)
 
-        IDLE: ; // Do Nothing
+        IDLE: begin
+          bits_received <= 0;
+          halfAligned <= 0;
+        end
 
         START: begin
           cycle_counter <= (tickAdvancement) ? 0 : cycle_counter + 1;

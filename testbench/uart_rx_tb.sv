@@ -33,6 +33,10 @@ module uart_rx_tb();
   );
 
   // Simulation Parameter + File:
+  integer simulation_file;
+  integer end_flag = 0;
+
+  // Data Vector File:
   integer test_points = 10;
   integer data_count = 0;
   integer stimulus_file;
@@ -57,11 +61,14 @@ module uart_rx_tb();
 
     // Send Stop Bit:
     rx_if.TxD = 1;
-    repeat(CYCLES_PER_BIT) @(posedge clk);
+    repeat(CYCLES_PER_BIT / 4) @(posedge clk);
+
+    // Write the Output:
+    $fwrite(simulation_file, "%0d-%0d\n", rx_if.RxData, rx_if.valid_rx);
+
+    repeat(3 * CYCLES_PER_BIT / 4) @(posedge clk);
 
   endtask
-
-  // Simulation Output Helper:
 
   initial begin
 
@@ -69,6 +76,12 @@ module uart_rx_tb();
     stimulus_file = $fopen("C:/Users/Enriq/Documents/personal/uart-controller/testbench/outputs/stimulus.txt", "r");
     if (stimulus_file == 0) begin
       $fatal(1, "ERROR: Could not open stimulus.txt");
+    end
+
+    // Create the Simulation Output File (CHANGE AS NEEDED):
+    simulation_file = $fopen("C:/Users/Enriq/Documents/personal/uart-controller/testbench/outputs/rx_simOutput.txt", "w");
+    if (simulation_file == 0) begin
+      $fatal(1, "ERROR: Could not create rx_simOutput.txt");
     end
 
     // Interface Connection:
@@ -83,9 +96,17 @@ module uart_rx_tb();
     rx_if.reset = 0;
     @(posedge clk);
 
-    // Read Data from Stimulus:
-    $fscanf(stimulus_file, "%d\n", rx_data);
-    send_data(rx_data);
+    while (!end_flag) begin
+
+      // Read Data from Stimulus:
+      $fscanf(stimulus_file, "%d\n", rx_data);
+      data_count++;
+
+      // Send the Data (Parallel):
+      send_data(rx_data);
+      end_flag = (data_count == test_points);
+
+    end
 
   end
 
