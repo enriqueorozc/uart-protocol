@@ -43,7 +43,7 @@ module uart_tx #(
   // Next-State Logic (Combinational):
   logic bitTransmitted, dataTransmitted;
   assign bitTransmitted = (cycle_counter == CYCLES_PER_BIT - 1);
-  assign dataTransmitted = (bit_index == 0 && bitTransmitted);
+  assign dataTransmitted = (bit_index == DATA_WIDTH - 1 && bitTransmitted);
 
   always_comb begin
     case (currState)
@@ -91,14 +91,14 @@ module uart_tx #(
           tx_packet.TxD <= 0;
           tx_packet.busy <= 1;
           tx_shift <= tx_packet.TxData;
-          bit_index <= DATA_WIDTH - 1;    // LSB-first
+          bit_index <= 0;    // LSB-first
           cycle_counter <= (bitTransmitted) ? 0 : cycle_counter + 1;
         end
 
         DATA: begin
           tx_packet.TxD <= tx_shift[bit_index];
           tx_packet.busy <= 1;
-          bit_index <= (bitTransmitted) ? bit_index - 1 : bit_index;
+          bit_index <= (bitTransmitted) ? bit_index + 1 : bit_index;
           cycle_counter <= (bitTransmitted) ? 0 : cycle_counter + 1;
         end
 

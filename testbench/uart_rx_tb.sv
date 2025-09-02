@@ -112,6 +112,7 @@ module uart_rx_tb();
 
     end
 
+    $finish;
   end
 
 endmodule

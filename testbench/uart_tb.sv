@@ -45,16 +45,24 @@ module uart_tb();
     // Interface Connection:
     uart_interface.transmit = 0;
     uart_interface.reset = 0;
-    uart_interface.TxD = 1;
+    uart_interface.TxData = 0;
 
     repeat(10) @(posedge tx_clk);
 
     // Reset TX/RX:
     uart_interface.reset = 1;
-    @(posedge tx_clk);
+    @(posedge rx_clk);
     uart_interface.reset = 0;
-    @(posedge tx_clk);
+    repeat(10) @(posedge rx_clk);
 
+    for (int i = 0; i < 7; i++) begin
+      uart_interface.TxData = message[i];
+      uart_interface.transmit = 1;
+      @(posedge tx_clk)
+      #90000;
+    end
+
+    $finish;
   end
 
 endmodule
